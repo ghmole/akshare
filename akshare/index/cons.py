@@ -84,15 +84,14 @@ short_headers = {
 }
 
 long_headers = {
-    'Accept': 'text/plain, */*; q=0.01',
-    'Accept-Encoding': 'gzip, deflate, br',
-    'Accept-Language': 'zh-CN,zh;q=0.8',
-    'Connection': 'keep-alive',
-    'Content-Length': '143',
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'Host': 'cn.investing.com',
-    'Origin': 'https://cn.investing.com',
-    'Referer': 'https://cn.investing.com/commodities/crude-oil-historical-data',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.91 Safari/537.36',
-    'X-Requested-With': 'XMLHttpRequest'
+    'accept': 'text/plain, */*; q=0.01',
+    # 'accept-encoding': 'gzip, deflate, br',
+    'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
+    'cache-control': 'no-cache',
+    'content-length': '267',
+    'content-type': 'application/x-www-form-urlencoded',
+    'origin': 'https://cn.investing.com',
+    'referer': 'https://cn.investing.com/commodities/brent-oil-historical-data',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.91 Safari/537.36',
+    'x-requested-with': 'XMLHttpRequest',
 }

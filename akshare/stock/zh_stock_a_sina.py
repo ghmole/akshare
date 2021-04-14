@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 # /usr/bin/env python
 """
-Date: 2021/1/25 16:28
+Date: 2021/4/4 16:28
 Desc: 新浪财经-A股-实时行情数据和历史行情数据(包含前复权和后复权因子)
 https://finance.sina.com.cn/realstock/company/sh689009/nc.shtml
 """
@@ -43,7 +43,8 @@ def _get_zh_a_page_count() -> int:
 
 def stock_zh_a_spot() -> pd.DataFrame:
     """
-    新浪财经-A股获取所有A股的实时行情数据, 重复运行本函数会被新浪暂时封 IP
+    新浪财经-A股
+    获取所有A股的实时行情数据; 重复运行本函数会被新浪暂时封 IP
     http://vip.stock.finance.sina.com.cn/mkt/#qbgg_hk
     :return: pandas.DataFrame
     """
@@ -75,6 +76,43 @@ def stock_zh_a_spot() -> pd.DataFrame:
             "turnoverratio": "float",
         }
     )
+    big_df.columns = [
+        '代码',
+        '_',
+        '名称',
+        '最新价',
+        '涨跌额',
+        '涨跌幅',
+        '买入',
+        '卖出',
+        '昨收',
+        '今开',
+        '最高',
+        '最低',
+        '成交量',
+        '成交额',
+        '_',
+        '_',
+        '_',
+        '_',
+        '_',
+        '_',
+    ]
+    big_df = big_df[[
+        '代码',
+        '名称',
+        '最新价',
+        '涨跌额',
+        '涨跌幅',
+        '买入',
+        '卖出',
+        '昨收',
+        '今开',
+        '最高',
+        '最低',
+        '成交量',
+        '成交额',
+    ]]
     return big_df
 
 
@@ -82,7 +120,7 @@ def stock_zh_a_daily(
     symbol: str = "sz000001",
     start_date: str = "19900101",
     end_date: str = "21000118",
-    adjust: str = "hfq",
+    adjust: str = "",
 ) -> pd.DataFrame:
     """
     新浪财经-A股-个股的历史行情数据, 大量抓取容易封 IP
@@ -283,10 +321,16 @@ def stock_zh_a_minute(
     }
     r = requests.get(url, params=params)
     temp_df = pd.DataFrame(json.loads(r.text.split("=(")[1].split(");")[0])).iloc[:, :6]
+
+    if temp_df.empty:
+        print(f"{symbol} 股票数据不存在，请检查是否已退市")
+        return None
+
     try:
         stock_zh_a_daily(symbol=symbol, adjust="qfq")
     except:
         return temp_df
+
     if adjust == "":
         return temp_df
 
@@ -327,28 +371,32 @@ def stock_zh_a_minute(
 if __name__ == "__main__":
     stock_zh_a_daily_hfq_df_one = stock_zh_a_daily(symbol="sz000592", start_date="20201106", end_date="20201110", adjust="qfq")
     print(stock_zh_a_daily_hfq_df_one)
+
     stock_zh_a_daily_hfq_df_three = stock_zh_a_daily(symbol="sz000001", start_date="19900103", end_date="20210118", adjust="qfq")
     print(stock_zh_a_daily_hfq_df_three)
+
     stock_zh_a_daily_hfq_df_two = stock_zh_a_daily(symbol="sz000001", start_date="19900103", end_date="20210118")
     print(stock_zh_a_daily_hfq_df_two)
 
-    qfq_factor_df = stock_zh_a_daily(symbol="sz000001", adjust="hfq-factor")
+    qfq_factor_df = stock_zh_a_daily(symbol="sz300857", adjust='hqf-factor')
     print(qfq_factor_df)
-    hfq_factor_df = stock_zh_a_daily(
-        symbol="sz000002", adjust="hfq-factor"
-    )
-    print(hfq_factor_df)
+
+    stock_zh_a_daily_hfq_factor_df = stock_zh_a_daily(symbol="sz000002", adjust="hfq-factor")
+    print(stock_zh_a_daily_hfq_factor_df)
+
     stock_zh_a_daily_df = stock_zh_a_daily(symbol="sh601939")
     print(stock_zh_a_daily_df)
+
     stock_zh_a_cdr_daily_df = stock_zh_a_cdr_daily(
         symbol="sh689009", start_date="20201103", end_date="20201116"
     )
     print(stock_zh_a_cdr_daily_df)
+
     stock_zh_a_spot_df = stock_zh_a_spot()
     print(stock_zh_a_spot_df)
-    stock_zh_a_minute_df = stock_zh_a_minute(
-        symbol="sh600751", period="30", adjust="qfq"
-    )
+
+    stock_zh_a_minute_df = stock_zh_a_minute(symbol="sh600751", period="1", adjust="qfq")
     print(stock_zh_a_minute_df)
+
     stock_zh_a_cdr_daily_df = stock_zh_a_cdr_daily(symbol="sh689009", start_date="19900101", end_date="22201116")
     print(stock_zh_a_cdr_daily_df)
